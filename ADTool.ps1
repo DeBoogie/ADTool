@@ -440,11 +440,16 @@ $searchBox.Add_KeyDown({
 $resetResultsMenuItem.Add_Click({
         $result = [System.Windows.Forms.MessageBox]::Show("Are you sure you want to clear the results?", "Confirm Reset", [System.Windows.Forms.MessageBoxButtons]::YesNo)
         if ($result -eq [System.Windows.Forms.DialogResult]::Yes) {
-            $script:searchResults = @()
-            $resultTable.Rows.Clear()
-            $resultTable.Columns.Clear()
-            $searchBox.Clear()
-            Write-LogMessage "Table cleared" -level "INFO"
+            try {
+                $script:searchResults = @()
+                $resultTable.Rows.Clear()
+                $resultTable.Columns.Clear()
+                $searchBox.Clear()
+                Write-LogMessage "Table cleared" -level "INFO"
+            }
+            catch {
+                Write-LogMessage "Error clearing results: $_" -level "ERROR"
+            }
         }
     })
     
