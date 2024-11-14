@@ -5,13 +5,17 @@ Add-Type -AssemblyName System.Drawing
 
 function Get-ConfigSettings {
     $configPath = Join-Path $PSScriptRoot "config.json"
-    $config = Get-Content $configPath -Raw | ConvertFrom-Json
-    
-    if (-not $config.DC -or $config.DC.Count -eq 0 -or -not ($config.DC | Where-Object { $_ -is [string] -and $_.Length -gt 0 })) {
-        Write-LogMessage "Configuration error: DC array is not defined or empty in the config.json file" -level "ERROR"
-        throw "Configuration error: At least one Domain Controller must be defined in the DC array"
+    if (-not (Test-Path $configPath)) {
+        Write-LogMessage "Config file not found at: $configPath" -level "ERROR"
+        throw "Configuration file missing"
     }
-    
+    try {
+        $config = Get-Content $configPath -Raw | ConvertFrom-Json
+    }
+    catch {
+        Write-LogMessage "Invalid JSON in config file" -level "ERROR"
+        throw "Invalid configuration format"
+    }
     return $config
 }
 
@@ -109,6 +113,9 @@ $resultTable.AllowUserToDeleteRows = $true
 $resultTable.AutoSizeColumnsMode = [System.Windows.Forms.DataGridViewAutoSizeColumnsMode]::Fill
 $resultTable.AutoSizeRowsMode = [System.Windows.Forms.DataGridViewAutoSizeRowsMode]::AllCells
 $resultTable.ColumnHeadersHeightSizeMode = [System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode]::AutoSize
+$resultTable.AllowUserToOrderColumns = $true
+$resultTable.MultiSelect = $true
+$resultTable.SelectionMode = 'FullRowSelect'
 $form.Controls.Add($resultTable)
 
 $contextMenu = New-Object System.Windows.Forms.ContextMenuStrip
