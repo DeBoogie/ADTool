@@ -289,16 +289,6 @@ $batchSearchMenuItem.Add_Click({
         }
     })
 
-$resetButton.Add_Click({
-        $result = [System.Windows.Forms.MessageBox]::Show("Are you sure you want to clear the results?", "Confirm Reset", [System.Windows.Forms.MessageBoxButtons]::YesNo)
-        if ($result -eq [System.Windows.Forms.DialogResult]::Yes) {
-            $script:searchResults = @()
-            $resultTable.Rows.Clear()
-            $resultTable.Columns.Clear()
-            $searchBox.Clear()
-        }
-    })
-
 $exportAction = {
     $saveFileDialog = New-Object System.Windows.Forms.SaveFileDialog
     $saveFileDialog.Filter = "Excel Files (*.xlsx)|*.xlsx"
